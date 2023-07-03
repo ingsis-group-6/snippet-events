@@ -12,6 +12,7 @@ plugins {
 
     // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
+    id 'maven-publish'
 }
 
 repositories {
@@ -34,13 +35,49 @@ dependencies {
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+
+
+tasks.withType(JavaCompile) {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+}
+
+kotlin {
+    // Set the Kotlin version
+    version = '1.8'
+    // Configure the target JVM version
+}
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+    kotlinOptions.jvmTarget = '1.8'
+}
+
+publishing {
+    repositories {
+        // Add GitHub Packages as a repository
+        maven {
+            url = uri('https://maven.pkg.github.com/ingsis-group-6/snippet-events')
+            credentials {
+                // Add your GitHub Packages username and personal access token
+                username = project.findProperty('gpr.user') ?: System.getenv('GITHUB_USERNAME')
+                password = project.findProperty('gpr.key') ?: System.getenv('GITHUB_TOKEN')
+            }
+        }
+    }
+
+    publications {
+        // Add your library publication
+        maven(MavenPublication) {
+            // Configure the publication settings
+            groupId = 'org.ingsis.group6'
+            artifactId = 'snippet-events'
+            version = '0.0.1-SNAPSHOT'
+            // Set the artifact to be published
+            from components.java
+        }
+    }
 }
