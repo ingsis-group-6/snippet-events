@@ -75,7 +75,7 @@ publishing {
             // Configure the publication settings
             groupId = 'org.ingsis.group6'
             artifactId = 'snippet-events'
-            version = '0.0.1-SNAPSHOT'
+            version = '0.0.5'
             // Set the artifact to be published
             from components.java
         }
